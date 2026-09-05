@@ -39,3 +39,11 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+.claude/
+CLAUDE.md
+AGENTS.md
+PROMPT_INICIAL_moviles.md
+PROMPT_MEJORAS.md
+PROMPT_BLOQUE2.md
+*Zone.Identifier

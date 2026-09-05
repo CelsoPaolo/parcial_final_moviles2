@@ -1,20 +1,57 @@
+import { DarkTheme, DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-export default function App() {
+import { ProveedorFavoritos } from './src/context/FavoritosContext';
+import { ProveedorPlanComidas } from './src/context/PlanComidasContext';
+import { ProveedorRecetas } from './src/context/RecetasContext';
+import { ProveedorTema } from './src/context/TemaContext';
+import { TabsNavigator } from './src/navigation/TabsNavigator';
+import { useTema } from './src/theme/useTema';
+
+/**
+ * Va separado de `App` porque necesita leer el tema, y para eso tiene que estar
+ * por dentro de `ProveedorTema`.
+ */
+function Contenido() {
+  const { colores, esOscuro } = useTema();
+
+  // Se le pasa el tema a React Navigation para que headers y fondos de las
+  // transiciones acompañen al modo claro/oscuro.
+  const base = esOscuro ? DarkTheme : DefaultTheme;
+  const temaNavegacion = {
+    ...base,
+    colors: {
+      ...base.colors,
+      background: colores.fondo,
+      card: colores.superficie,
+      text: colores.texto,
+      border: colores.borde,
+      primary: colores.primario,
+    },
+  };
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer theme={temaNavegacion}>
+      <TabsNavigator />
+      <StatusBar style={esOscuro ? 'light' : 'dark'} />
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  return (
+    <SafeAreaProvider>
+      <ProveedorTema>
+        <ProveedorRecetas>
+          <ProveedorFavoritos>
+            <ProveedorPlanComidas>
+              <Contenido />
+            </ProveedorPlanComidas>
+          </ProveedorFavoritos>
+        </ProveedorRecetas>
+      </ProveedorTema>
+    </SafeAreaProvider>
+  );
+}
